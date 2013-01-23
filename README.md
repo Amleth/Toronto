@@ -43,8 +43,6 @@ A metadata is any word you need, preceded by `"%$"`.
 
     %$NAME Mary
 
-    %$
-
     Mary is a brilliant pianist.
     (…)
 
@@ -64,8 +62,6 @@ You can define semantic relations:
     %@ mary
     %$NAME Mary
     %&loves>peter
-
-    %$
 
     Mary is a brilliant pianist.
     (…)
