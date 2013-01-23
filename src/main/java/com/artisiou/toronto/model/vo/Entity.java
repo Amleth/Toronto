@@ -23,6 +23,10 @@ public class Entity {
 		return this.id;
 	}
 
+	public void setId(String id) {
+		this.id = id;
+	}
+
 	private String content;
 
 	public String getContent() {
@@ -65,18 +69,15 @@ public class Entity {
 	}
 
 	private String makeId() {
-		String id = null;
+		String id;
 
-		for (Metadata m : this.getMetadata()) {
-			if (m.getName().equals("id"))
-				id = m.getValue();
-		}
-
-		if (id == null) {
+		if (this.id == null) {
 			id = this.root.relativize(this.uri).toString();
 			id = id.substring(0, id.length() - 4);
 			id = id.replace(" ", "_");
 			id = id.replace("/", "_");
+		} else {
+			id = this.id;
 		}
 
 		return id;

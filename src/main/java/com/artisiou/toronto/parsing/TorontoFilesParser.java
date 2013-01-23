@@ -64,26 +64,26 @@ public class TorontoFilesParser extends SimpleFileVisitor<Path> {
 				while ((line = br.readLine()) != null) {
 
 					// The patterns we are looking for
+					Matcher id_matcher = Pattern.compile("\\s*%\\s*\\@\\s*(.*)").matcher(line);
 					Matcher metadata_matcher = Pattern.compile("\\s*%\\s*\\$\\s*(\\S*)\\s*(.*)").matcher(line);
 					Matcher link_matcher = Pattern.compile("\\s*%\\s*&\\s*(\\S*)\\s*(<|>)\\s*(.*)").matcher(line);
 					Matcher open_comment_matcher = Pattern.compile("\\s*%\\s*\\(").matcher(line);
 					Matcher close_comment_matcher = Pattern.compile("\\s*%\\s*\\)").matcher(line);
 
-					if (metadata_matcher.find()) {
+					if (id_matcher.find()) {
+						ent.setId(id_matcher.group(1).trim());
+					} else if (metadata_matcher.find()) {
 						lastEncounteredMetadata.clear();
 						Metadata md = new Metadata(metadata_matcher.group(1).trim()).setValue(metadata_matcher.group(2).trim());
 						ent.addMetadata(md);
 						lastEncounteredMetadata.add(md);
 					} else if (link_matcher.find()) {
 						lastEncounteredMetadata.clear();
-						String[] entities = link_matcher.group(3).trim().split("@");
-						for (String eid : entities) {
-							eid = eid.trim();
-							if (eid.length() > 0) {
-								Link l = new Link(link_matcher.group(1).trim(), ent, eid, link_matcher.group(2).trim().equals("<") ? true : false);
-								ent.addLink(l);
-								lastEncounteredMetadata.add(l);
-							}
+						String referenced_entity = link_matcher.group(3).trim();
+						if (referenced_entity.length() > 0) {
+							Link l = new Link(link_matcher.group(1).trim(), ent, referenced_entity, link_matcher.group(2).trim().equals("<") ? true : false);
+							ent.addLink(l);
+							lastEncounteredMetadata.add(l);
 						}
 					} else if (open_comment_matcher.find()) {
 						isCommentContent = true;
